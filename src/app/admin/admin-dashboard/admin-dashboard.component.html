@@ -1,45 +1,69 @@
-<app-admin-dheader></app-admin-dheader>
-
 <div class="dashboard-container">
-  <main class="main-content">
+  <app-admin-dheader></app-admin-dheader>
+
+  <div class="dashboard-container">
+    <main class="main-content">
       <div class="header">
-          <h1>Dashboard</h1>
-          <div class="contact-info" *ngIf="userDetails">
-              <i class="ri-phone-line" style="margin-right: 10px; font-size: 24px;"></i>
-              <a href="tel:{{userDetails.contactNo}}">{{userDetails.contactNo}}</a>
-          </div>
+        <h1>Dashboard</h1>
+        <div class="contact-info" *ngIf="userDetails">
+          <i class="ri-phone-line" style="margin-right: 10px; font-size: 24px;"></i>
+          <a href="tel:{{ userDetails.contactNo }}">{{ userDetails.contactNo }}</a>
+        </div>
       </div>
+
       <div class="banner-image">
-          <img src="https://cdn-bfgmm.nitrocdn.com/SZnNrJtCHNQoEVazTVryKEZBGmHzgakX/assets/images/optimized/rev-fa18e7c/ideausher.com/wp-content/uploads/2021/03/Artboard-2.png"
-              alt="Gas delivery trucks">
+        <img class="gas" alt="">
       </div>
+
       <div class="customer-table">
-          <table>
-              <thead>
-                  <tr>
-                      <th>Name</th>
-                      <th>Address</th>
-                      <th>Delivery Date</th>
-                      <th>Delivery Time</th>
-                      <th>Payment Method</th>
-                      <th>Contact No</th>
-                      <th>Action</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr *ngFor="let order of orders">
-                      <td>{{ order.customerName }}</td>
-                      <td>{{ order.addressLine1 }} {{ order.addressLine2 }}, {{ order.city }}</td>
-                      <td>{{ order.deliveryDate }}</td>
-                      <td>{{ order.deliveryTime }}</td>
-                      <td>{{ order.paymentMethod }}</td>
-                      <td>{{ order.mobileNumber }}</td>
-                      <td><button class="action-button" (click)="order.id !== undefined && deleteOrder(order.id)">Cancel</button></td>
-                  </tr>
-              </tbody>
-          </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Delivery Date</th>
+              <th>Status</th>
+              <th>Outlet Id</th>
+              <th>Quantity</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let deliverShedule of deliverShedules">
+              <td>{{ deliverShedule.id }}</td>
+              <td>{{ deliverShedule.deliveryDate }}</td>
+              <td>{{ deliverShedule.status }}</td>
+              <td>{{ deliverShedule.outletId }}</td>
+              <td>{{ deliverShedule.qty }}</td>
+              <td>
+                <button class="action-button" (click)="openPopup(deliverShedule)">Proceed</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-  </main>
+    </main>
+  </div>
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- POPUP MODAL -->
+<div class="popup-container" *ngIf="showPopup">
+  <div class="popup">
+    <h2 style="text-align: center; font-size: x-large; font-weight: 400;">Delivery Details</h2>
+    <p>Delivery Date: {{ selectedSchedule?.deliveryDate }}</p>
+
+    <div *ngFor="let gas of selectedSchedule?.deliveryGasDTOS">
+      <label>Gas ID:</label>
+      <input type="text" [value]="gas.gasId" readonly />
+      <label>Quantity:</label>
+      <input type="number" [(ngModel)]="gas.quantity" />
+    </div>
+
+    <div class="popup-actions">
+      <button class="deliver-button" (click)="selectedSchedule && deliver(selectedSchedule)">Deliver</button>
+      <button class="close-button" (click)="closePopup()">Close</button>
+    </div>
+  </div>
 </div>
 
-<app-admin-sidebar></app-admin-sidebar>
+</div>

@@ -3,6 +3,8 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, mapTo } from 'rxjs/operators';
 import { OrderSummaryDTO } from '../model/order-summary.model';
+import { deliverShedule } from '../model/deliver-shedule.model';
+import { deliverOrderShedule } from '../model/deliver-order-shedule.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +19,12 @@ export class OrderService { // changed from GasCollectService to OrderService
     return this.http.post(`${this.baseUrl}/delieveryShedule`, deliveryCompletionDTO);
   }
 
+  getLastOrderId(): Observable<number | string> {
+    return this.http.get<number | string>(`${this.baseUrl}/orders/last-id`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
   getOrdersByUserId(userId: number): Observable<OrderSummaryDTO[]> {
     return this.http.get<OrderSummaryDTO[]>(`${this.apiUrl}/user/${userId}`);
   }
@@ -37,6 +45,10 @@ export class OrderService { // changed from GasCollectService to OrderService
     return this.http.get<any[]>(`${this.baseUrl}/gas`);
   }
 
+  getAllGassesByOutlet(outlet: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/outlets/id/${outlet}`);
+  }
+
   updateGas(id: number, gasDTO: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/gas/${id}`, gasDTO);
   }
@@ -53,6 +65,10 @@ export class OrderService { // changed from GasCollectService to OrderService
 
   createScheduleOrder(orderDTO: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/orders/schedule`, orderDTO);
+  }
+
+  generateToken(){
+    return this.http.get(`${this.baseUrl}/orders/generateToken`);
   }
 
   sellRequestedOrder(orderId: number): Observable<any> {
@@ -161,9 +177,25 @@ export class OrderService { // changed from GasCollectService to OrderService
       );
   }
 
+  deliverShedule(deliverOrderShedule:deliverOrderShedule): Observable<deliverOrderShedule> {
+    console.log("deliverOrderShedule message +",deliverOrderShedule);
+    
+    return this.http.post<deliverOrderShedule>(`${this.baseUrl}/delieveryShedule`, deliverOrderShedule)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // Get all orders
   getAllOrderSummary(): Observable<OrderSummaryDTO[]> {
     return this.http.get<OrderSummaryDTO[]>(`${this.apiUrl}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  getSheduleDeliveries(): Observable<deliverShedule[]> {
+    return this.http.get<deliverShedule[]>(`${this.baseUrl}/delieveryShedule`)
       .pipe(
         catchError(this.handleError)
       );
